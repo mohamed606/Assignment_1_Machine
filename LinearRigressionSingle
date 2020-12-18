@@ -4,33 +4,32 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    x1 = list()
-    prices = list()
-    x1_test = list()
-    prices_test = list()
     dataset = pandas.read_csv("house_data.csv")
     needed_dataset_size = int(len(dataset) * 0.8)
-    mean_of_x1 = dataset['sqft_living15'][:needed_dataset_size].mean()
-    my_range = dataset['sqft_living15'][:needed_dataset_size].max() - dataset['sqft_living15'][
-                                                                      :needed_dataset_size].min()
-    mean_of_x1_test = dataset['sqft_living15'][needed_dataset_size:].mean()
-    my_range_test = dataset['sqft_living15'][needed_dataset_size:].max() - dataset['sqft_living15'][
-                                                                           needed_dataset_size:].min()
-    for i in range(0, needed_dataset_size):
-        x1.append(scale_feature(dataset['sqft_living15'][i], mean_of_x1, my_range))
-        prices.append(dataset['price'][i])
+    training_set = dataset[0:needed_dataset_size]
+    x1_training_set = (training_set['sqft_living15'] - training_set['sqft_living15'].mean()) / (
+            training_set['sqft_living15'].max() - training_set['sqft_living15'].min())
+    prices_training_set = (training_set['price'] - training_set['price'].mean()) / (
+            training_set['price'].max() - training_set['price'].min())
+    test_set = dataset[needed_dataset_size:]
+    test_set.reset_index(drop=True, inplace=True)
+    x1_test_set = (test_set['sqft_living15'] - test_set['sqft_living15'].mean()) / (
+            test_set['sqft_living15'].max() - test_set['sqft_living15'].min())
+    prices_test_set = (test_set['price'] - test_set['price'].mean()) / (
+            test_set['price'].max() - test_set['price'].min())
+    print(x1_test_set)
+    parameters = start_liner_regression(prices_training_set, x1_training_set)
 
-    for i in range(needed_dataset_size, len(dataset)):
-        x1_test.append(scale_feature(dataset['sqft_living15'][i], mean_of_x1_test, my_range_test))
-        prices_test.append(dataset['price'][i])
+    test(prices_test_set, x1_test_set, parameters)
 
-    parameters = start_liner_regression(prices, x1)
-
-    # test(prices_test, x1_test, parameters)
-
-    plt.scatter(x1_test, prices_test)
-    plt.plot(x1_test, calculate_y_pre(parameters[0], parameters[1], x1_test))
+    plt.scatter(x1_test_set, prices_test_set)
+    plt.plot(x1_test_set, calculate_y_pre(parameters[0], parameters[1], x1_test_set))
     plt.show()
+    print("Enter x to exit")
+    x1 = 'c'
+    while not (x1 == 'x'):
+        x1 = input("Enter sqft_living15")
+        print(hypothesis(parameters[0], parameters[1], float(x1)))
 
 
 def scale_feature(x1, mean, my_range):
@@ -44,21 +43,25 @@ def start_liner_regression(prices, x1):
 
 
 def gradient_descent(c1, c2, prices, x1):
-    learning_rate = 1
-    stop_diff = 1
+    learning_rate = 0.05
     y_pre = calculate_y_pre(c1, c2, x1)
     old_cost = cost_function(prices, y_pre)
+    number_of_iterations = 2000
+    counter = 0
     while True:
         temp_c1 = c1 - learning_rate * diff_cost_function_c1(prices, y_pre)
         temp_c2 = c2 - learning_rate * diff_cost_function_c2(prices, y_pre, x1)
         c1 = temp_c1
         c2 = temp_c2
         y_pre = calculate_y_pre(c1, c2, x1)
-        print(old_cost)
         new_cost = cost_function(prices, y_pre)
-        if old_cost - new_cost <= 1:
+        counter = counter + 1
+        print(old_cost)
+        if counter == number_of_iterations:
             break
         old_cost = new_cost
+    print("c1: ", c1)
+    print("c2: ", c2)
     return [c1, c2]
 
 
