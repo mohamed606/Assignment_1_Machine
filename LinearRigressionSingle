@@ -7,18 +7,20 @@ def main():
     dataset = pandas.read_csv("house_data.csv")
     needed_dataset_size = int(len(dataset) * 0.8)
     training_set = dataset[0:needed_dataset_size]
-    mean_of_training_set = training_set['sqft_living15'].mean()
-    range_of_training_set = training_set['sqft_living15'].max() - training_set['sqft_living15'].min()
-    x1_training_set = (training_set['sqft_living15'] - mean_of_training_set) / (
-        range_of_training_set)
-    prices_training_set = (training_set['price'] - training_set['price'].mean()) / (
-            training_set['price'].max() - training_set['price'].min())
+    mean_of_dataset_x1 = dataset['sqft_living15'].mean()
+    range_of_dataset_x1 = dataset['sqft_living15'].max() - dataset['sqft_living15'].min()
+    mean_of_dataset_price = dataset['price'].mean()
+    range_of_dataset_price = dataset['price'].max() - dataset['price'].min()
+    x1_training_set = (training_set['sqft_living15'] - mean_of_dataset_x1) / (
+        range_of_dataset_x1)
+    prices_training_set = (training_set['price'] - mean_of_dataset_price) / (
+        range_of_dataset_price)
     test_set = dataset[needed_dataset_size:]
     test_set.reset_index(drop=True, inplace=True)
-    x1_test_set = (test_set['sqft_living15'] - test_set['sqft_living15'].mean()) / (
-            test_set['sqft_living15'].max() - test_set['sqft_living15'].min())
-    prices_test_set = (test_set['price'] - test_set['price'].mean()) / (
-            test_set['price'].max() - test_set['price'].min())
+    x1_test_set = (test_set['sqft_living15'] - mean_of_dataset_x1) / (
+        range_of_dataset_x1)
+    prices_test_set = (test_set['price'] - mean_of_dataset_price) / (
+        range_of_dataset_price)
     parameters = start_liner_regression(prices_training_set, x1_training_set)
 
     test(prices_test_set, x1_test_set, parameters)
@@ -35,8 +37,8 @@ def main():
         if x1.__eq__('x'):
             break
         print(un_scale(hypothesis(parameters[0], parameters[1],
-                                  scale_feature(float(x1), mean_of_training_set, range_of_training_set)),
-                       mean_of_training_set, range_of_training_set))
+                                  scale_feature(float(x1), mean_of_dataset_x1, range_of_dataset_x1)),
+                       mean_of_dataset_price, range_of_dataset_price))
 
 
 def un_scale(y, mean, my_range):
