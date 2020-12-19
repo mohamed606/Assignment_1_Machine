@@ -35,7 +35,8 @@ def main():
         if x1.__eq__('x'):
             break
         print(un_scale(hypothesis(parameters[0], parameters[1],
-                                  scale_feature(float(x1), mean_of_training_set, range_of_training_set))))
+                                  scale_feature(float(x1), mean_of_training_set, range_of_training_set)),
+                       mean_of_training_set, range_of_training_set))
 
 
 def un_scale(y, mean, my_range):
