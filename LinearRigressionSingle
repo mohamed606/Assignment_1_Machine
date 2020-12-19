@@ -7,8 +7,10 @@ def main():
     dataset = pandas.read_csv("house_data.csv")
     needed_dataset_size = int(len(dataset) * 0.8)
     training_set = dataset[0:needed_dataset_size]
-    x1_training_set = (training_set['sqft_living15'] - training_set['sqft_living15'].mean()) / (
-            training_set['sqft_living15'].max() - training_set['sqft_living15'].min())
+    mean_of_training_set = training_set['sqft_living15'].mean()
+    range_of_training_set = training_set['sqft_living15'].max() - training_set['sqft_living15'].min()
+    x1_training_set = (training_set['sqft_living15'] - mean_of_training_set) / (
+        range_of_training_set)
     prices_training_set = (training_set['price'] - training_set['price'].mean()) / (
             training_set['price'].max() - training_set['price'].min())
     test_set = dataset[needed_dataset_size:]
@@ -17,19 +19,27 @@ def main():
             test_set['sqft_living15'].max() - test_set['sqft_living15'].min())
     prices_test_set = (test_set['price'] - test_set['price'].mean()) / (
             test_set['price'].max() - test_set['price'].min())
-    print(x1_test_set)
     parameters = start_liner_regression(prices_training_set, x1_training_set)
 
     test(prices_test_set, x1_test_set, parameters)
 
+    plt.xlabel("sqft_living15")
+    plt.ylabel("price")
+    plt.title("Real vs predicted values")
     plt.scatter(x1_test_set, prices_test_set)
     plt.plot(x1_test_set, calculate_y_pre(parameters[0], parameters[1], x1_test_set))
     plt.show()
     print("Enter x to exit")
-    x1 = 'c'
-    while not (x1 == 'x'):
+    while True:
         x1 = input("Enter sqft_living15")
-        print(hypothesis(parameters[0], parameters[1], float(x1)))
+        if x1.__eq__('x'):
+            break
+        print(un_scale(hypothesis(parameters[0], parameters[1],
+                                  scale_feature(float(x1), mean_of_training_set, range_of_training_set))))
+
+
+def un_scale(y, mean, my_range):
+    return (y * my_range) + mean
 
 
 def scale_feature(x1, mean, my_range):
