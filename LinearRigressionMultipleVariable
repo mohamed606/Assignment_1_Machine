@@ -24,14 +24,8 @@ def main():
 
     parameters = start_liner_regression(scaled_training_set_features)
 
+    print("testing error")
     test(scaled_test_set_features, parameters)
-
-    plt.xlabel("sqft_living")
-    plt.ylabel("price")
-    plt.title("Real vs predicted values")
-    plt.scatter(scaled_test_set_features[1:], scaled_test_set_features[0])
-    plt.plot(scaled_test_set_features[1:], calculate_y_pre(parameters, scaled_test_set_features[1:]))
-    plt.show()
 
 
 def un_scale(y, mean, my_range):

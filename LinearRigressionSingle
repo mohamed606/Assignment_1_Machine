@@ -23,6 +23,7 @@ def main():
         range_of_dataset_price)
     parameters = start_liner_regression(prices_training_set, x1_training_set)
 
+    print("testing error")
     test(prices_test_set, x1_test_set, parameters)
 
     plt.xlabel("sqft_living")
