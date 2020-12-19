@@ -70,7 +70,7 @@ def gradient_descent(c1, c2, prices, x1):
         y_pre = calculate_y_pre(c1, c2, x1)
         new_cost = cost_function(prices, y_pre)
         counter = counter + 1
-        print(old_cost)
+        # print(old_cost)
         if counter == number_of_iterations:
             break
         old_cost = new_cost

@@ -47,7 +47,7 @@ def gradient_descent(parameters, scaled_features):
     learning_rate = 0.001
     y_pre = calculate_y_pre(parameters, scaled_features[1:])
     old_cost = cost_function(scaled_features[0], y_pre)
-    number_of_iterations = 100000
+    number_of_iterations = 10778
     counter = 0
     temp_parameters = [0] * len(parameters)
     while True:
@@ -61,7 +61,7 @@ def gradient_descent(parameters, scaled_features):
         y_pre = calculate_y_pre(parameters, scaled_features[1:])
         new_cost = cost_function(scaled_features[0], y_pre)
         counter = counter + 1
-        print(old_cost)
+        # print(old_cost)
         if old_cost < new_cost:
             print("bom shaka laka")
             break
